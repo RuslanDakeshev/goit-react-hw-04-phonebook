@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import Form from './Form/Form';
 import { Filter } from 'components/Filter/Filter';
 import { ContactList } from 'components/ContactList/ContactList';
-// import { customAlphabet } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 import { Container, Title, Subtitle } from './App.styled';
 import { initialContacts } from 'data/initialContacts';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
-// const nanoid = customAlphabet('1234567890', 3);
+const nanoid = customAlphabet('1234567890', 3);
 
 const CONTACT_KEY = 'contacts'
 
@@ -19,49 +19,36 @@ export const App = () => {
     localStorage.setItem(CONTACT_KEY,JSON.stringify(contacts))
   }, [contacts])
 
-  const handlerSubmit = newContact => {
-    setContacts(prevContacts => {
-      if (prevContacts.find(contact => contact.name === newContact.name)) {
-        alert(`${newContact.name} is already in contacts.`);
-        return prevContacts
-      }
-      return [newContact, ...prevContacts]
-  })
-}
+//   const handlerSubmit = newContact => {
+//     setContacts(prevContacts => {
+//       if (prevContacts.find(contact => contact.name === newContact.name)) {
+//         alert(`${newContact.name} is already in contacts.`);
+//         return prevContacts
+//       }
+//       return [newContact, ...prevContacts]
+//   })
+// }
 
 
-  // componentDidMount() {
-  //   const savedContacts = localStorage.getItem('contacts');
-
-  //   if (savedContacts) {
-  //     this.setState({ contacts: JSON.parse(savedContacts) });
-  //   }
-  // }
-
-  // componentDidUpdate(prewProps, prewState) {
-  //   const { contacts } = this.state;
-  //   if (prewState.contacts !== contacts) {
-  //     localStorage.setItem('contacts', JSON.stringify(contacts))
-  //   }
-  // }
 
 
-  // formSubmitHandler = data => {
-  //   console.log(data);
-  //   const newContact = {
-  //     ...data, id: nanoid(),
+  const formSubmitHandler = data => {
+    const newContact = {
+      ...data, id: nanoid()
+    }
 
-  //     name: data.name,
-  //     number: data.number,
+    const isExist = contacts.find(
+      ({ name }) => name.toLowerCase() ===newContact.name.toLowerCase()
+    );
+    
+    if (isExist) {
+      return alert(`${newContact.name} is already in contacts.`);
+    }
 
-  //   };
-  //   console.log(newContact);
-  //   this.setState(prevState => ({
+    
+   setContacts(prevContacts => [newContact, ...prevContacts])
 
-  //     contacts:[newContact, ...prevState.contacts]
-  //   }))
-
-  // }
+  }
 
    const changeFilter = e => {
     setFilter(e.currentTarget.value );
@@ -83,7 +70,7 @@ export const App = () => {
     return (
       <Container>
         <Title>Phonebook</Title>
-        <Form onSubmit={handlerSubmit} />
+        <Form onSubmit={formSubmitHandler} />
         <Subtitle>Contacts</Subtitle>
 
         <Filter value={filter} onFilter={changeFilter} />
